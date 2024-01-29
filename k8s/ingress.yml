@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: visitorz-ingress
+  annotations:
+    cert-manager.io/issuer: letsencrypt
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - visitorz.southcity.dev
+    secretName: letsencrypt-cert
+  rules:
+  - host: visitorz.southcity.dev
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: visitorz-service
+            port:
+              number: 8000
