@@ -1,20 +1,29 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+	"strconv"
+)
 
-const CookieName = "has_visited"
+const CookieName = "visitorNumber"
 
-func visitedCookieExists(r *http.Request) bool {
-	_, err := r.Cookie(CookieName)
+func readVisitorCookie(r *http.Request) (int, bool) {
+	c, err := r.Cookie(CookieName)
 	if err != nil {
-		return false
+		return 0, false
 	}
-	return true
+
+	visitorNumber, err := strconv.Atoi(c.Value)
+	if err != nil {
+		return 0, false
+	}
+
+	return visitorNumber, true
 }
 
-func writeVisitedCookie(w http.ResponseWriter) {
+func writeVisitorCookie(w http.ResponseWriter, visitorNumber int) {
 	http.SetCookie(w, &http.Cookie{
 		Name:  CookieName,
-		Value: "1",
+		Value: strconv.Itoa(visitorNumber),
 	})
 }
